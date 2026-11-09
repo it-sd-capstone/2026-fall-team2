@@ -4,6 +4,8 @@
 .env
 .env*
 !.env.example
+config.php
+**/config.php
 config.local.php
 *.local.php
 
