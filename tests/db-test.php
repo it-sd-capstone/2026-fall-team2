@@ -1,10 +1,14 @@
 <?php
 // PHP/MySQL Integration Test
 
-$host = getenv("DB_HOST") ?: "127.0.0.1";
-$dbname = getenv("DB_NAME") ?: "whatscookin_test";
-$username = getenv("DBUSER") ?: "root";
-$password = getenv("DB_PASSWORD");
+$configFile = __DIR__ . "/config.php";
+if (file_exists($configFile)) {
+  require $configFile;}
+
+$host = $DB_HOST ?? getenv("DB_HOST") ?: "127.0.0.1";
+$dbname = $DB_NAME ?? getenv("DB_NAME") ?: "whatscookin_test";
+$username = $DB_USER ?? getenv("DB_USER") ?: "root";
+$password = $DB_PASSWORD ?? getenv("DB_PASSWORD");
 
 if ($password === false){
   $password = "";
