@@ -8,21 +8,20 @@
 </head>
 <body>
     <header>
-        <h1>What's Cookin'</h1>
         <nav>
             <ul>
                 <li><a href="index.php" id="home-link">Home</a></li>
             </ul>
         </nav>
-        <form class="search-form" action="search.php" method="get">
-            <input type="search" name="query" placeholder="Search recipes">
-            <button type="submit">Search</button>
-        </form>
-        <form class="login-form" action="login.php" method="post">
-            <input type="text" name="username" placeholder="Username">
-            <input type="password" name="password" placeholder="Password">
-            <button type="submit">Login</button>
-        </form>
+        <h1>What's Cookin'</h1>
+        <div class="header-right">
+            <form class="search-form" action="search.php" method="get">
+                <input type="search" name="query" placeholder="Search recipes">
+                <button type="submit">Search</button>
+            </form>
+            <a href="login.php">Log In</a>
+            <a href="register.php">Register</a>
+        </div>
     </header>
     <button id="sidebar-toggle">☰</button>
     <nav id="sidebar" class="sidebar">
