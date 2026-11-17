@@ -1,9 +1,10 @@
 /* ===== Colors ===== */
 :root {
     --bg-page:     #faf8f5;  /* warm off-white, page background */
-    --bg-panel:    #ffffff;  /* white, header & sidebar */
+    --bg-panel:    #ffffff;  /* white, header, sidebar, cards */
+    --bg-hero:     #f1ede4;  /* soft beige, banner */
     --border:      #e5e0d8;  /* soft gray-beige lines */
-    --accent:      #c0392b;  /* tomato red, buttons */
+    --accent:      #c0392b;  /* tomato red, buttons & titles */
     --accent-dark: #962d22;  /* darker red, hover */
     --link:        #2c5f7c;  /* muted blue, links */
     --text:        #2d2d2d;  /* charcoal, main text */
@@ -34,12 +35,15 @@ nav ul {
 
 /* ===== Header ===== */
 header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
     display: grid;
     grid-template-columns: 1fr auto 1fr;
     align-items: center;
     padding: 10px 20px;
     background-color: var(--bg-panel);
-    border-bottom: 1px solid var(--border);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 header h1 {
@@ -82,4 +86,47 @@ button {
 
 button:hover {
     background-color: var(--accent-dark);
+}
+
+/* ===== Layout ===== */
+main {
+    padding: 24px;
+}
+
+#sidebar {
+    background-color: var(--bg-panel);
+    border-right: 1px solid var(--border);
+    width: 200px;
+    padding: 16px;
+}
+
+/* ===== Banner ===== */
+.hero {
+    background-color: var(--bg-hero);
+    border-radius: 8px;
+    padding: 32px;
+    margin-bottom: 24px;
+}
+
+.hero h2 {
+    margin-top: 0;
+}
+
+/* ===== Recipe Cards ===== */
+.recipe-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+}
+
+.recipe-card {
+    background-color: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.recipe-card h3 {
+    margin-top: 0;
+    color: var(--accent);
 }

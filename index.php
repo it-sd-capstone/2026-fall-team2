@@ -5,9 +5,10 @@ require 'includes/recipes.php';
 $recipes = getRecipeCards($pdo);
 
 include 'includes/header.php'; ?>
-
-        <h2>Welcome to What's Cookin'</h2>
-        <p>Discover delicious recipes for every meal!</p>
+        <section class="hero">
+                <h2>Find your next favorite meal</h2>
+                <p>Discover delicious recipes for every meal!</p>
+        </section>
 
         <div class="recipe-grid">
             <?php foreach ($recipes as $recipe): ?>
