@@ -4,6 +4,7 @@ require 'includes/recipes.php';
 
 $search = trim($_GET['query'] ?? '');
 $sort = $_GET['sort'] ?? 'title';
+$recipes = [];
 $suggestion = null;
 
 if ($search !== '') {
@@ -30,6 +31,10 @@ include 'includes/header.php'; ?>
             <option value="steps" <?php if ($sort === 'steps') echo 'selected'; ?>>Fewest steps</option>
         </select>
     </form>
+
+    <?php if ($suggestion !== null && !empty($recipes)): ?>
+        <p class="suggestion">No exact matches. Showing results for "<strong><?php echo htmlspecialchars($suggestion, ENT_QUOTES, 'UTF-8'); ?></strong>" instead.</p>
+    <?php endif; ?>
 
     <?php if (empty($recipes)): ?>
         <p>No recipes found. Try a different word or phrase.</p>
