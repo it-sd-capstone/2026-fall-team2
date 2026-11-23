@@ -13,6 +13,8 @@ if ($category !== '') {
 include 'includes/header.php'; ?>
     <?php if ($category !== ''): ?>
         <h2><?php echo htmlspecialchars(ucfirst($category), ENT_QUOTES, 'UTF-8'); ?> Recipes</h2>
+    <?php else: ?>
+        <section class="hero">
             <h2>Find your next favorite meal</h2>
             <p>Discover delicious recipes for every meal!</p>
         </section>
