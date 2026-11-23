@@ -39,7 +39,8 @@ header {
     top: 0;
     z-index: 100;
     display: grid;
-    grid-template-columns: 1fr auto 1fr;
+    grid-template-columns: auto 1fr auto;
+    gap: 20px;
     align-items: center;
     padding: 10px 20px;
     background-color: var(--bg-panel);
@@ -48,6 +49,14 @@ header {
 
 header h1 {
     color: var(--accent);
+}
+
+header h1 a {
+    color: var(--accent);
+}
+
+header h1 a:hover {
+    color: var(--accent-dark);
 }
 
 .header-right {

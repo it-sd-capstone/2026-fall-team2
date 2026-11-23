@@ -8,12 +8,8 @@
 </head>
 <body>
     <header>
-        <nav>
-            <ul>
-                <li><a href="index.php" id="home-link">Home</a></li>
-            </ul>
-        </nav>
-        <h1>What's Cookin'</h1>
+        <h1><a href="index.php">What's Cookin'</a></h1>
+        <nav><ul><li><a href="index.php" id="home-link">Home</a></li></ul></nav>
         <div class="header-right">
             <form class="search-form" action="search.php" method="get">
                 <input type="search" name="query" placeholder="Search recipes">
