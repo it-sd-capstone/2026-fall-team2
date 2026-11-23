@@ -6,15 +6,26 @@ function getRecipeCards(PDO $pdo): array
         FROM recipes
         ORDER BY created_at DESC, recipe_id DESC"
     );
+
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function searchRecipes(PDO $pdo, string $search): array
+function searchRecipes(PDO $pdo, string $search, string $sort = 'title'): array
 {
-    $stmt = $pdo->prepare( // Prepare the SQL statement with placeholders for the search term
-        "SELECT recipe_id, title, prep_time, bake_time
+    // Only these sorts are allowed. Anything else falls back to title.
+    $sortOptions = [
+        'title'  => 'title ASC',
+        'newest' => 'created_at DESC, recipe_id DESC',
+        'steps'  => 'step_count ASC, title ASC'
+    ];
+    $orderBy = $sortOptions[$sort] ?? $sortOptions['title'];
+
+    // Prepare the SQL statement with placeholders for the search term
+    $stmt = $pdo->prepare(
+        "SELECT recipe_id, title, prep_time, bake_time,
+            (SELECT COUNT(*) FROM steps WHERE steps.recipe_id = recipes.recipe_id) AS step_count
         FROM recipes
-                WHERE title LIKE :title
+        WHERE title LIKE :title
             OR notes LIKE :notes
             OR EXISTS (
                 SELECT 1
@@ -29,15 +40,20 @@ function searchRecipes(PDO $pdo, string $search): array
                 WHERE ri.recipe_id = recipes.recipe_id
                     AND i.name LIKE :ingredient
             )
-        ORDER BY title ASC"
+        ORDER BY $orderBy"
     );
 
-    $like = '%' . $search . '%'; // this line lets you search for recipes that contain the search term anywhere in the title or notes 
-    $stmt->execute(['title' => $like,
-                    'notes' => $like,
-                    'step' => $like,
-                    'ingredient' => $like
-                    ]); // Execute the statement with the search term bound to the placeholders
+    // Matches the search term anywhere in the title, notes, steps or ingredients
+    $like = '%' . $search . '%';
+
+    // Execute the statement with the search term bound to each placeholder
+    $stmt->execute([
+        'title'      => $like,
+        'notes'      => $like,
+        'step'       => $like,
+        'ingredient' => $like
+    ]);
+
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
@@ -53,5 +69,6 @@ function getRecipesByCategory(PDO $pdo, string $category): array
     );
 
     $stmt->execute(['category' => $category]);
+
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
