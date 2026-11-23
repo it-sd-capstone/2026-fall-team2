@@ -40,3 +40,18 @@ function searchRecipes(PDO $pdo, string $search): array
                     ]); // Execute the statement with the search term bound to the placeholders
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
+function getRecipesByCategory(PDO $pdo, string $category): array
+{
+    $stmt = $pdo->prepare(
+        "SELECT r.recipe_id, r.title, r.prep_time, r.bake_time
+        FROM recipes r
+        JOIN recipe_categories rc ON rc.recipe_id = r.recipe_id
+        JOIN categories c ON c.category_id = rc.category_id
+        WHERE c.category_name = :category
+        ORDER BY r.created_at DESC, r.recipe_id DESC"
+    );
+
+    $stmt->execute(['category' => $category]);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
