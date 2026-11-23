@@ -13,8 +13,8 @@ database services.
 2. Start Apache and MySQL from the XAMPP Control Panel.
 3. Clone the repository from GitHub into C:\xampp\htdocs.
 4. Open phpMyAdmin at http://localhost/phpmyadmin/.
-5. Run database/database-test.sql in phpMyAdmin to create the database and tables.
-6. Configuration is not necessary for XAMPP. For the live site, copy tests/config.example.php to tests/config.php and fill in the database values.
+5. On a fresh local database, import database/schema.sql and then database/sample-data.sql once in phpMyAdmin to create and populate whatscookin.
+6. Default XAMPP settings work without a configuration file. For other settings, create tests/config.php with the correct database values. For a local server on port 3307, use DB_HOST=127.0.0.1, DB_NAME=whatscookin, DB_USER=root, an empty DB_PASSWORD, and DB_PORT=3307 as PHP variables prefixed with $. The live site also reads its settings from tests/config.php.
 7. Open http://localhost/2026-fall-team2/ in a web browser.
 
 ## Testing
@@ -69,3 +69,19 @@ https://whatscookin.gt.tc/tests/db-test.php
 
 For local development, start Apache and MySQL in XAMPP and open the project's 
 PHP pages through http://localhost/2026-fall-team2.
+
+### Recipe detail page
+
+Recipe card titles on Home/Browse, category pages, and search results link to
+recipe.php?id=RECIPE_ID. The page displays prep and bake times in minutes,
+oven temperature in Fahrenheit when present, ingredient quantities, ordered
+steps, and notes when present.
+
+To check locally with the sample data, open recipe.php?id=1, recipe.php?id=2,
+and recipe.php?id=3. Recipe 1 should show a bake time of 0 minutes and no
+oven temperature. Recipe 2 should show 425 degrees Fahrenheit and no notes.
+Check that ingredients appear once and the steps follow their step numbers.
+
+A missing, malformed, zero, or negative ID returns HTTP 400 with a message
+and a link back to all recipes. An ID such as 99999 that is valid but absent
+returns HTTP 404. Database text is escaped before it is displayed.

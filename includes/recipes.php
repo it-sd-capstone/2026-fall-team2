@@ -122,3 +122,43 @@ function suggestWord(string $search, array $words): ?string
 
     return $closestWord;
 }
+// Detail queries are separate so multiple ingredients and steps stay distinct.
+function getRecipeById(PDO $pdo, int $recipeId): ?array
+{
+    $statement = $pdo->prepare(
+        'SELECT recipe_id, title, prep_time, bake_time, bake_temp, notes
+         FROM recipes
+         WHERE recipe_id = :recipe_id'
+    );
+    $statement->execute(['recipe_id' => $recipeId]);
+
+    $recipe = $statement->fetch(PDO::FETCH_ASSOC);
+    return $recipe === false ? null : $recipe;
+}
+
+function getRecipeIngredients(PDO $pdo, int $recipeId): array
+{
+    $statement = $pdo->prepare(
+        'SELECT i.name, ri.quantity
+         FROM recipe_ingredients ri
+         JOIN ingredients i ON i.ingredient_id = ri.ingredient_id
+         WHERE ri.recipe_id = :recipe_id
+         ORDER BY i.name, i.ingredient_id'
+    );
+    $statement->execute(['recipe_id' => $recipeId]);
+
+    return $statement->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function getRecipeSteps(PDO $pdo, int $recipeId): array
+{
+    $statement = $pdo->prepare(
+        'SELECT step_number, instruction
+         FROM steps
+         WHERE recipe_id = :recipe_id
+         ORDER BY step_number, step_id'
+    );
+    $statement->execute(['recipe_id' => $recipeId]);
+
+    return $statement->fetchAll(PDO::FETCH_ASSOC);
+}
