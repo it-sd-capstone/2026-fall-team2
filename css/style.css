@@ -220,6 +220,44 @@ body.sidebar-closed #sidebar-toggle {
     margin-top: 0;
     color: var(--accent);
 }
+/* ===== Recipe Detail ===== */
+.recipe-detail {
+    max-width: 800px;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.recipe-detail article {
+    padding: 24px;
+    background-color: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+}
+
+.recipe-detail h2 {
+    margin-top: 0;
+    color: var(--accent);
+}
+
+.recipe-times {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+}
+
+.recipe-times dt {
+    font-weight: bold;
+}
+
+.recipe-times dd {
+    margin: 4px 0 0;
+}
+
+.recipe-detail li {
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
 
 /* ===== Footer ===== */
 footer {
