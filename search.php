@@ -20,17 +20,19 @@ if ($search !== '') {
 }
 
 include 'includes/header.php'; ?>
-    <h2>Search results for "<?php echo htmlspecialchars($search, ENT_QUOTES, 'UTF-8'); ?>"</h2>
+    <div class="results-header">
+        <h2>Search results for "<?php echo htmlspecialchars($search, ENT_QUOTES, 'UTF-8'); ?>"</h2>
 
-    <form class="sort-form" action="search.php" method="get">
-        <input type="hidden" name="query" value="<?php echo htmlspecialchars($search, ENT_QUOTES, 'UTF-8'); ?>">
-        <label for="sort">Sort by</label>
-        <select name="sort" id="sort" onchange="this.form.submit()">
-            <option value="title" <?php if ($sort === 'title') echo 'selected'; ?>>Title (A-Z)</option>
-            <option value="newest" <?php if ($sort === 'newest') echo 'selected'; ?>>Newest</option>
-            <option value="steps" <?php if ($sort === 'steps') echo 'selected'; ?>>Fewest steps</option>
-        </select>
-    </form>
+        <form class="sort-form" action="search.php" method="get">
+            <input type="hidden" name="query" value="<?php echo htmlspecialchars($search, ENT_QUOTES, 'UTF-8'); ?>">
+            <label for="sort">Sort by</label>
+            <select name="sort" id="sort" onchange="this.form.submit()">
+                <option value="title" <?php if ($sort === 'title') echo 'selected'; ?>>Title (A-Z)</option>
+                <option value="newest" <?php if ($sort === 'newest') echo 'selected'; ?>>Newest</option>
+                <option value="steps" <?php if ($sort === 'steps') echo 'selected'; ?>>Fewest steps</option>
+            </select>
+        </form>
+    </div>
 
     <?php if ($suggestion !== null && !empty($recipes)): ?>
         <p class="suggestion">No exact matches. Showing results for "<strong><?php echo htmlspecialchars($suggestion, ENT_QUOTES, 'UTF-8'); ?></strong>" instead.</p>
