@@ -72,3 +72,53 @@ function getRecipesByCategory(PDO $pdo, string $category): array
 
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
+
+// Builds a list of every real word on the site (recipe titles and ingredient names)
+// so we have something to compare a misspelled search against
+function getSearchWords(PDO $pdo): array
+{
+    // UNION stacks the titles and ingredient names into one list
+    $stmt = $pdo->query(
+        "SELECT title AS text FROM recipes
+        UNION
+        SELECT name FROM ingredients"
+    );
+
+    $words = [];
+
+    // FETCH_COLUMN gives us a simple list of text instead of rows
+    foreach ($stmt->fetchAll(PDO::FETCH_COLUMN) as $text) {
+        // Explode -> Splits "Banana Overnight Oats" into "banana", "overnight", "oats"
+        foreach (explode(' ', strtolower($text)) as $word) {
+            $words[] = $word;
+        }
+    }
+
+    // Remove duplicates like "banana" showing up in two titles
+    return array_unique($words);
+}
+
+// Finds the real word closest to what the user typed
+// Returns null if nothing is close enough to be a typo
+function suggestWord(string $search, array $words): ?string
+{
+    $search = strtolower($search);
+    $closestWord = null;
+
+    // Only accept words that are 2 or fewer letter changes away
+    $fewestChanges = 3;
+
+    foreach ($words as $word) {
+        // levenshtein counts how many letter changes turn one word into the other
+        //"bananna" to "banana" = 1
+        $letterChanges = levenshtein($search, $word);
+
+        // Keep this word if it's closer than the best one so far
+        if ($letterChanges < $fewestChanges) {
+            $fewestChanges = $letterChanges;
+            $closestWord = $word;
+        }
+    }
+
+    return $closestWord;
+}

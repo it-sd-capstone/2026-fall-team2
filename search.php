@@ -4,10 +4,18 @@ require 'includes/recipes.php';
 
 $search = trim($_GET['query'] ?? '');
 $sort = $_GET['sort'] ?? 'title';
-$recipes = [];
+$suggestion = null;
 
 if ($search !== '') {
     $recipes = searchRecipes($pdo, $search, $sort);
+
+    // No matches returned, so try the closest real word in case of a typo
+    if (empty($recipes)) {
+        $suggestion = suggestWord($search, getSearchWords($pdo));
+        if ($suggestion !== null) {
+            $recipes = searchRecipes($pdo, $suggestion, $sort);
+        }
+    }
 }
 
 include 'includes/header.php'; ?>
