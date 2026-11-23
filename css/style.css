@@ -1,10 +1,10 @@
 /* ===== Colors ===== */
 :root {
     --bg-page:     #faf8f5;  /* warm off-white, page background */
-    --bg-panel:    #ffffff;  /* white, header, sidebar, cards */
-    --bg-hero:     #f1ede4;  /* soft beige, banner */
+    --bg-panel:    #ffffff;  /* white, header and cards */
+    --bg-hero:     #f1ede4;  /* soft beige, banner and sidebar */
     --border:      #e5e0d8;  /* soft gray-beige lines */
-    --accent:      #c0392b;  /* tomato red, buttons & titles */
+    --accent:      #c0392b;  /* tomato red, buttons and titles */
     --accent-dark: #962d22;  /* darker red, hover */
     --link:        #2c5f7c;  /* muted blue, links */
     --text:        #2d2d2d;  /* charcoal, main text */
@@ -33,6 +33,25 @@ nav ul {
     padding: 0;
 }
 
+/* ===== Page Layout ===== */
+/* Two columns: sidebar on the left, page content on the right */
+body {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    align-items: start;
+}
+
+/* Header and footer stretch across both columns */
+header,
+footer {
+    grid-column: 1 / -1;
+}
+
+main {
+    grid-column: 2;
+    padding: 24px 24px 24px 40px;
+}
+
 /* ===== Header ===== */
 header {
     position: sticky;
@@ -45,10 +64,6 @@ header {
     padding: 10px 20px;
     background-color: var(--bg-panel);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-header h1 {
-    color: var(--accent);
 }
 
 header h1 a {
@@ -97,16 +112,23 @@ button:hover {
     background-color: var(--accent-dark);
 }
 
-/* ===== Layout ===== */
-main {
-    padding: 24px;
-}
-
+/* ===== Sidebar ===== */
 #sidebar {
+    grid-column: 1;
     background-color: var(--bg-hero);
     border-right: 1px solid var(--border);
     min-height: calc(100vh - 105px);
     padding: 16px;
+}
+
+/* Space between the two link lists */
+#sidebar ul {
+    margin-bottom: 20px;
+}
+
+/* Space between each link */
+#sidebar li {
+    margin-bottom: 8px;
 }
 
 /* ===== Sidebar Toggle ===== */
@@ -143,24 +165,41 @@ body.sidebar-closed #sidebar-toggle {
     margin-top: 0;
 }
 
-/* ===== Page Layout ===== */
-body {
-    display: grid;
-    grid-template-columns: 220px 1fr;
-    align-items: start;
+/* ===== Search Results ===== */
+/* Heading on the left, sort dropdown on the right */
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
 }
 
-header,
-footer {
-    grid-column: 1 / -1;
+.sort-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-#sidebar {
-    grid-column: 1;
+.sort-form select {
+    padding: 6px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background-color: var(--bg-panel);
+    color: var(--text);
+    font-size: 14px;
+    cursor: pointer;
 }
 
-main {
-    grid-column: 2;
+.sort-form select:focus {
+    outline: 2px solid var(--accent);
+}
+
+/* Typo message box */
+.suggestion {
+    background-color: var(--bg-hero);
+    border-left: 4px solid var(--accent);
+    padding: 10px 14px;
+    border-radius: 4px;
 }
 
 /* ===== Recipe Cards ===== */
@@ -217,4 +256,14 @@ main {
 .recipe-detail li {
     margin-bottom: 12px;
     line-height: 1.5;
+}
+
+
+/* ===== Footer ===== */
+footer {
+    background-color: var(--bg-panel);
+    border-top: 1px solid var(--border);
+    text-align: center;
+    padding: 16px;
+    font-size: 14px;
 }
