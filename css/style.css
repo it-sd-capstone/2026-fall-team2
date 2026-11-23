@@ -39,7 +39,7 @@ header {
     top: 0;
     z-index: 100;
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: auto 1fr;
     gap: 20px;
     align-items: center;
     padding: 10px 20px;
@@ -119,6 +119,27 @@ main {
 
 .hero h2 {
     margin-top: 0;
+}
+
+/* ===== Page Layout ===== */
+body {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    align-items: start;
+}
+
+header,
+#sidebar-toggle,
+footer {
+    grid-column: 1 / -1;
+}
+
+#sidebar {
+    grid-column: 1;
+}
+
+main {
+    grid-column: 2;
 }
 
 /* ===== Recipe Cards ===== */
