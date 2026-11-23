@@ -103,10 +103,32 @@ main {
 }
 
 #sidebar {
-    background-color: var(--bg-panel);
+    background-color: var(--bg-hero);
     border-right: 1px solid var(--border);
-    width: 200px;
+    min-height: calc(100vh - 105px);
     padding: 16px;
+}
+
+/* ===== Sidebar Toggle ===== */
+#sidebar-toggle {
+    position: fixed;
+    top: 120px;
+    left: 220px;
+    z-index: 200;
+    padding: 12px 6px;
+    border-radius: 0 6px 6px 0;
+}
+
+body.sidebar-closed {
+    grid-template-columns: 0 1fr;
+}
+
+body.sidebar-closed #sidebar {
+    display: none;
+}
+
+body.sidebar-closed #sidebar-toggle {
+    left: 0;
 }
 
 /* ===== Banner ===== */
@@ -129,7 +151,6 @@ body {
 }
 
 header,
-#sidebar-toggle,
 footer {
     grid-column: 1 / -1;
 }
