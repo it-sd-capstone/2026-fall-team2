@@ -1,16 +1,6 @@
 <?php
-function getRecipeCards(PDO $pdo): array
-{
-    $stmt = $pdo->query(
-        "SELECT recipe_id, title, prep_time, bake_time
-        FROM recipes
-        ORDER BY created_at DESC, recipe_id DESC"
-    );
 
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
-
-function searchRecipes(PDO $pdo, string $search, string $sort = 'title'): array
+function getOrderBy(string $sort, string $default = 'title'): string
 {
     // Only these sorts are allowed. Anything else falls back to title.
     $sortOptions = [
@@ -18,7 +8,26 @@ function searchRecipes(PDO $pdo, string $search, string $sort = 'title'): array
         'newest' => 'created_at DESC, recipe_id DESC',
         'steps'  => 'step_count ASC, title ASC'
     ];
-    $orderBy = $sortOptions[$sort] ?? $sortOptions['title'];
+    return $sortOptions[$sort] ?? $sortOptions[$default];
+}
+
+function getRecipeCards(PDO $pdo, string $sort = 'newest'): array
+{
+    $orderBy = getOrderBy($sort, 'newest');
+
+    $stmt = $pdo->query(
+        "SELECT recipe_id, title, prep_time, bake_time,
+            (SELECT COUNT(*) FROM steps WHERE steps.recipe_id = recipes.recipe_id) AS step_count
+        FROM recipes
+        ORDER BY $orderBy"
+    );
+
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function searchRecipes(PDO $pdo, string $search, string $sort = 'title'): array
+{
+    $orderBy = getOrderBy($sort, 'title');
 
     // Prepare the SQL statement with placeholders for the search term
     $stmt = $pdo->prepare(
@@ -57,15 +66,23 @@ function searchRecipes(PDO $pdo, string $search, string $sort = 'title'): array
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function getRecipesByCategory(PDO $pdo, string $category): array
+// fixed the function to use EXISTS due to recipe_id being in multiple tables and not being unique to one table
+function getRecipesByCategory(PDO $pdo, string $category, string $sort = 'newest'): array
 {
+    $orderBy = getOrderBy($sort, 'newest');
+
     $stmt = $pdo->prepare(
-        "SELECT r.recipe_id, r.title, r.prep_time, r.bake_time
-        FROM recipes r
-        JOIN recipe_categories rc ON rc.recipe_id = r.recipe_id
-        JOIN categories c ON c.category_id = rc.category_id
-        WHERE c.category_name = :category
-        ORDER BY r.created_at DESC, r.recipe_id DESC"
+        "SELECT recipe_id, title, prep_time, bake_time,
+            (SELECT COUNT(*) FROM steps WHERE steps.recipe_id = recipes.recipe_id) AS step_count
+        FROM recipes
+        WHERE EXISTS (
+            SELECT 1
+            FROM recipe_categories rc
+            JOIN categories c ON c.category_id = rc.category_id
+            WHERE rc.recipe_id = recipes.recipe_id
+                AND c.category_name = :category
+        )
+        ORDER BY $orderBy"
     );
 
     $stmt->execute(['category' => $category]);
