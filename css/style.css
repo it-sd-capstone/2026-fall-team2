@@ -220,6 +220,19 @@ body.sidebar-closed #sidebar-toggle {
     margin-top: 0;
     color: var(--accent);
 }
+
+.recipe-card h3 {
+    margin-top: 0;
+    color: var(--accent);
+}
+
+.recipe-card h3 a {
+    color: var(--accent);
+}
+
+.recipe-card h3 a:hover {
+    color: var(--accent-dark);
+}
 /* ===== Recipe Detail ===== */
 .recipe-detail {
     max-width: 800px;
