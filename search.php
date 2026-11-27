@@ -12,7 +12,7 @@ if ($search !== '') {
 
     // No matches returned, so try the closest real word in case of a typo
     if (empty($recipes)) {
-        $suggestion = suggestWord($search, getSearchWords($pdo));
+        $suggestion = suggestSearch($search, getSearchWords($pdo));
         if ($suggestion !== null) {
             $recipes = searchRecipes($pdo, $suggestion, $sort);
         }

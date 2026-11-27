@@ -29,39 +29,51 @@ function searchRecipes(PDO $pdo, string $search, string $sort = 'title'): array
 {
     $orderBy = getOrderBy($sort, 'title');
 
-    // Prepare the SQL statement with placeholders for the search term
-    $stmt = $pdo->prepare(
-        "SELECT recipe_id, title, prep_time, bake_time,
-            (SELECT COUNT(*) FROM steps WHERE steps.recipe_id = recipes.recipe_id) AS step_count
-        FROM recipes
-        WHERE title LIKE :title
-            OR notes LIKE :notes
+    // Split the search into words so "banana oats" can match "Banana Overnight Oats"
+    $searchWords = preg_split('/\s+/', trim($search));
+    // preg_split cuts on a pattern instead of exact text.
+    // '/\s+/' means one or more spaces, tabs or new lines in a row,
+    // so "banana   oats" becomes ["banana", "oats"] with no empty words.
+
+    $conditions = [];
+    $params = [];
+
+    foreach ($searchWords as $n => $word) {
+        // Each word gets its own numbered placeholders, like :title0 and :title1
+        $conditions[] = "(title LIKE :title$n
+            OR notes LIKE :notes$n
             OR EXISTS (
                 SELECT 1
                 FROM steps
                 WHERE steps.recipe_id = recipes.recipe_id
-                    AND steps.instruction LIKE :step
+                    AND steps.instruction LIKE :step$n
             )
             OR EXISTS (
                 SELECT 1
                 FROM recipe_ingredients ri
                 JOIN ingredients i ON ri.ingredient_id = i.ingredient_id
                 WHERE ri.recipe_id = recipes.recipe_id
-                    AND i.name LIKE :ingredient
-            )
+                    AND i.name LIKE :ingredient$n
+            ))";
+
+        $like = '%' . $word . '%';
+        $params["title$n"] = $like;
+        $params["notes$n"] = $like;
+        $params["step$n"] = $like;
+        $params["ingredient$n"] = $like;
+    }
+
+    // Every word has to match somewhere in the recipe
+    $where = implode(' AND ', $conditions);
+
+    $stmt = $pdo->prepare(
+        "SELECT recipe_id, title, prep_time, bake_time,
+            (SELECT COUNT(*) FROM steps WHERE steps.recipe_id = recipes.recipe_id) AS step_count
+        FROM recipes
+        WHERE $where
         ORDER BY $orderBy"
     );
-
-    // Matches the search term anywhere in the title, notes, steps or ingredients
-    $like = '%' . $search . '%';
-
-    // Execute the statement with the search term bound to each placeholder
-    $stmt->execute([
-        'title'      => $like,
-        'notes'      => $like,
-        'step'       => $like,
-        'ingredient' => $like
-    ]);
+    $stmt->execute($params);
 
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
@@ -139,6 +151,32 @@ function suggestWord(string $search, array $words): ?string
 
     return $closestWord;
 }
+
+// Fixes each misspelled word in a search, like "bananna oats" to "banana oats"
+// Returns the fixed search, or null if nothing needed fixing
+function suggestSearch(string $search, array $words): ?string
+{
+    $searchWords = preg_split('/\s+/', strtolower(trim($search)));
+    $changed = false;
+
+    foreach ($searchWords as $n => $searchWord) {
+        // Skip words that are already real words on the site
+        if (in_array($searchWord, $words)) {
+            continue;
+        }
+
+        $closestWord = suggestWord($searchWord, $words);
+        if ($closestWord !== null) {
+            $searchWords[$n] = $closestWord;
+            $changed = true;
+        }
+    }
+
+    // Only return a suggestion if at least one word changed
+    // implode glues the fixed words back into one search, like "banana oats"
+    return $changed ? implode(' ', $searchWords) : null;
+}
+
 // Detail queries are separate so multiple ingredients and steps stay distinct.
 function getRecipeById(PDO $pdo, int $recipeId): ?array
 {
